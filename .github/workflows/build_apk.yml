@@ -17,7 +17,8 @@ jobs:
           channel: 'stable'
 
       - name: Recreate Android Project Files
-        run: flutter create . --platforms=android
+        run: flutter create . --platforms=android --project-name hosboy_app
+
 
       - name: Get Dependencies
         run: flutter pub get
