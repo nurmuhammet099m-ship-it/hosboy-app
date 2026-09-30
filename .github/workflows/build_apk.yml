@@ -19,6 +19,22 @@ jobs:
       - name: Recreate Android Project Files
         run: flutter create . --platforms=android --project-name hosboy_app
 
+      - name: Set App Name to HOSBOY
+        run: |
+          sed -i 's/android:label=".*"/android:label="HOŞBOÝ"/' android/app/src/main/AndroidManifest.xml
+
+      - name: Update App Icon
+        run: |
+          mkdir -p android/app/src/main/res/mipmap-hdpi
+          mkdir -p android/app/src/main/res/mipmap-mdpi
+          mkdir -p android/app/src/main/res/mipmap-xhdpi
+          mkdir -p android/app/src/main/res/mipmap-xxhdpi
+          mkdir -p android/app/src/main/res/mipmap-xxxhdpi
+          cp app_icon.png.jpg android/app/src/main/res/mipmap-hdpi/ic_launcher.png
+          cp app_icon.png.jpg android/app/src/main/res/mipmap-mdpi/ic_launcher.png
+          cp app_icon.png.jpg android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
+          cp app_icon.png.jpg android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+          cp app_icon.png.jpg android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
 
       - name: Get Dependencies
         run: flutter pub get
