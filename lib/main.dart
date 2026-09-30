@@ -4,7 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Supabase.initialize(
-    url: 'https://hifaxjsvxspicwzccrsh.supabase.co',
+    url: 'https://steep-grass-510a.nurmuhammetmerdanov49.workers.dev',
     anonKey: 'sb_publishable_KW5FCXCmyYR-VJTRoRLWUA_YPJh4ljH',
   );
   runApp(const MyApp());
@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
