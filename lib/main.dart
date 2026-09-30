@@ -4,10 +4,12 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Supabase.initialize(
-    url: 'https://steep-grass-510a.nurmuhammetmerdanov49.workers.dev',
-    anonKey: 'Sb_publishable_KW5FCXCmyYR-VJTRoRLWUA_YPJh4ljH',
+    url: 'https://hifaxjsvxspicwzccrsh.supabase.co',
+    anonKey: 'sb_publishable_KW5FCXCmyYR-VJTRoRLWUA_YPJh4ljH',
   );
   runApp(const MyApp());
+}
+
 }
 
 class MyApp extends StatelessWidget {
