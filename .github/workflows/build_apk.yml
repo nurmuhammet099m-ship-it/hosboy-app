@@ -23,18 +23,20 @@ jobs:
         run: |
           sed -i 's/android:label=".*"/android:label="HOŞBOÝ"/' android/app/src/main/AndroidManifest.xml
 
-      - name: Update App Icon
+      - name: Convert and Update App Icon
         run: |
+          sudo apt-get update && sudo apt-get install -y imagemagick
+          convert app_icon.png.jpg -resize 512x512 app_icon_converted.png
           mkdir -p android/app/src/main/res/mipmap-hdpi
           mkdir -p android/app/src/main/res/mipmap-mdpi
           mkdir -p android/app/src/main/res/mipmap-xhdpi
           mkdir -p android/app/src/main/res/mipmap-xxhdpi
           mkdir -p android/app/src/main/res/mipmap-xxxhdpi
-          cp app_icon.png.jpg android/app/src/main/res/mipmap-hdpi/ic_launcher.png
-          cp app_icon.png.jpg android/app/src/main/res/mipmap-mdpi/ic_launcher.png
-          cp app_icon.png.jpg android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
-          cp app_icon.png.jpg android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
-          cp app_icon.png.jpg android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+          cp app_icon_converted.png android/app/src/main/res/mipmap-hdpi/ic_launcher.png
+          cp app_icon_converted.png android/app/src/main/res/mipmap-mdpi/ic_launcher.png
+          cp app_icon_converted.png android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
+          cp app_icon_converted.png android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+          cp app_icon_converted.png android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
 
       - name: Get Dependencies
         run: flutter pub get
@@ -47,3 +49,4 @@ jobs:
         with:
           name: release-apk
           path: build/app/outputs/flutter-apk/app-release.apk
+
