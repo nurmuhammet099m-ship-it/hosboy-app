@@ -10,12 +10,13 @@ void main() async {
   runApp(const MyApp());
 }
 
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'HOSBOY',
+      title: 'HOŞBOÝ',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -83,12 +84,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
     setState(() => _isLoading = true);
     try {
-      final res = await supabase.auth.verifyOTP(
+      final response = await supabase.auth.verifyOTP(
         email: email,
         token: token,
-        type: OtpType.magiclink,
+        type: OtpType.email,
       );
-      if (res.session != null && mounted) {
+      if (response.session != null && mounted) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => const HomeScreen()),
         );
@@ -96,7 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Doğrulama Başarısız: ${e.toString()}')),
+          SnackBar(content: Text('Hata: ${e.toString()}')),
         );
       }
     } finally {
@@ -107,7 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('HOSBOY - Giriş Yap')),
+      appBar: AppBar(title: const Text('HOŞBOÝ - Giriş Yap')),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
@@ -167,7 +168,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('HOSBOY Ana Sayfa'),
+        title: const Text('HOŞBOÝ Ana Sayfa'),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -179,12 +180,12 @@ class HomeScreen extends StatelessWidget {
                 );
               }
             },
-          )
+          ),
         ],
       ),
       body: const Center(
         child: Text(
-          'HOSBOY Uygulamasına Hoş Geldiniz!',
+          'HOŞBOÝ Uygulamasına Hoş Geldiniz!',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
