@@ -10,8 +10,6 @@ void main() async {
   runApp(const MyApp());
 }
 
-}
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -28,7 +26,6 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -80,7 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (token.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Lütfen gelen kodu girin.')),
+        const SnackBar(content: Text('Lütfen doğrulama kodunu girin.')),
       );
       return;
     }
@@ -88,13 +85,14 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = true);
     try {
       final response = await supabase.auth.verifyOTP(
-        email: email,
+        type: OtpType.magiclink,
         token: token,
-        type: OtpType.email,
+        email: email,
       );
+
       if (response.session != null && mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Giriş başarılı!')),
         );
       }
     } catch (e) {
@@ -111,85 +109,68 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('HOŞBOÝ - Giriş Yap')),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(
-                labelText: 'E-Posta Adresi',
-                border: OutlineInputBorder(),
-              ),
-              keyboardType: TextInputType.emailAddress,
-              enabled: !_otpSent,
+        child: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  'HOŞBOÝ',
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 2,
+                  ),
+                ),
+                const SizedBox(height: 40),
+                if (!_otpSent) ...[
+                  TextField(
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: const InputDecoration(
+                      labelText: 'E-posta Adresi',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.email),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: _isLoading ? null : _sendOTP,
+                      child: _isLoading
+                          ? const CircularProgressIndicator()
+                          : const Text('Kod Gönder'),
+                    ),
+                  ),
+                ] else ...[
+                  TextField(
+                    controller: _otpController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      labelText: 'Doğrulama Kodu (OTP)',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.lock),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: _isLoading ? null : _verifyOTP,
+                      child: _isLoading
+                          ? const CircularProgressIndicator()
+                          : const Text('Giriş Yap'),
+                    ),
+                  ),
+                ],
+              ],
             ),
-            const SizedBox(height: 16),
-            if (_otpSent) ...[
-              TextField(
-                controller: _otpController,
-                decoration: const InputDecoration(
-                  labelText: 'Gmail Kodu (OTP)',
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.number,
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: _isLoading ? null : _verifyOTP,
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(50),
-                ),
-                child: _isLoading
-                    ? const CircularProgressIndicator()
-                    : const Text('Giriş Yap'),
-              ),
-            ] else ...[
-              ElevatedButton(
-                onPressed: _isLoading ? null : _sendOTP,
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(50),
-                ),
-                child: _isLoading
-                    ? const CircularProgressIndicator()
-                    : const Text('Kod Gönder'),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('HOŞBOÝ Ana Sayfa'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              await Supabase.instance.client.auth.signOut();
-              if (context.mounted) {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (_) => const LoginScreen()),
-                );
-              }
-            },
           ),
-        ],
-      ),
-      body: const Center(
-        child: Text(
-          'HOŞBOÝ Uygulamasına Hoş Geldiniz!',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
     );
