@@ -10,9 +10,6 @@ void main() async {
   runApp(const MyApp());
 }
 
-  runApp(const MyApp());
-}
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -44,6 +41,12 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
 
   final supabase = Supabase.instance.client;
+
+  // Admin E-posta Listesi
+  final List<String> adminEmails = [
+    'iamceobitch1@gmail.com',
+    'iamceobitch2@gmail.com',
+  ];
 
   Future<void> _sendOTP() async {
     final email = _emailController.text.trim();
@@ -87,95 +90,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
     setState(() => _isLoading = true);
     try {
-      final response = await supabase.auth.verifyOTP(
-        type: OtpType.magiclink,
-        token: token,
+      await supabase.auth.verifyOTP(
         email: email,
+        token: token,
+        type: OtpType.email,
       );
-
-      if (response.session != null && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Giriş başarılı!')),
-        );
-      }
-    } catch (e) {
+      
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Hata: ${e.toString()}')),
+          const SnackBar(content: Text('Başarıyla giriş yapıldı!')),
         );
-      }
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Center(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  'HOŞBOÝ',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 2,
-                  ),
-                ),
-                const SizedBox(height: 40),
-                if (!_otpSent) ...[
-                  TextField(
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                      labelText: 'E-posta Adresi',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.email),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: _isLoading ? null : _sendOTP,
-                      child: _isLoading
-                          ? const CircularProgressIndicator()
-                          : const Text('Kod Gönder'),
-                    ),
-                  ),
-                ] else ...[
-                  TextField(
-                    controller: _otpController,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      labelText: 'Doğrulama Kodu (OTP)',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.lock),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: _isLoading ? null : _verifyOTP,
-                      child: _isLoading
-                          ? const CircularProgressIndicator()
-                          : const Text('Giriş Yap'),
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
+        // Admin kontrolü ve yönlendirme
+        if (
