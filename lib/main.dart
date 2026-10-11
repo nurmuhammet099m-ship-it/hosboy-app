@@ -42,7 +42,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final supabase = Supabase.instance.client;
 
-  // Admin E-posta Listesi
   final List<String> adminEmails = [
     'iamceobitch1@gmail.com',
     'iamceobitch2@gmail.com',
@@ -57,10 +56,15 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+    });
+
     try {
       await supabase.auth.signInWithOtp(email: email);
-      setState(() => _otpSent = true);
+      setState(() {
+        _otpSent = true;
+      });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Doğrulama kodu e-postanıza gönderildi!')),
@@ -73,7 +77,11 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       }
     } finally {
-      if (mounted) setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -88,18 +96,159 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+    });
+
     try {
       await supabase.auth.verifyOTP(
         email: email,
         token: token,
         type: OtpType.email,
       );
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Başarıyla giriş yapıldı!')),
         );
 
-        // Admin kontrolü ve yönlendirme
-        if (
+        if (adminEmails.contains(email.toLowerCase())) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const AdminHomeScreen()),
+          );
+        } else {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const UserHomeScreen()),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Hata: ${e.toString()}')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('HOŞBOÝ Giriş')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextField(
+              controller: _emailController,
+              decoration: const InputDecoration(labelText: 'E-posta Adresi'),
+              keyboardType: TextInputType.emailAddress,
+            ),
+            if (_otpSent) ...[
+              const SizedBox(height: 16),
+              TextField(
+                controller: _otpController,
+                decoration: const InputDecoration(labelText: 'Doğrulama Kodu (OTP)'),
+                keyboardType: TextInputType.number,
+              ),
+            ],
+            const SizedBox(height: 24),
+            _isLoading
+                ? const CircularProgressIndicator()
+                : ElevatedButton(
+                    onPressed: _otpSent ? _verifyOTP : _sendOTP,
+                    child: Text(_otpSent ? 'Kodu Doğrula' : 'Kod Gönder'),
+                  ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class AdminHomeScreen extends StatelessWidget {
+  const AdminHomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('HOŞBOÝ Admin Paneli'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              await Supabase.instance.client.auth.signOut();
+              if (context.mounted) {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                );
+              }
+            },
+          ),
+        ],
+      ),
+      body: const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.admin_panel_settings, size: 80, color: Colors.blue),
+            SizedBox(height: 16),
+            Text(
+              'Yönetici Paneline Hoş Geldiniz!',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8),
+            Text('Ürün ve sipariş yönetimi alanı'),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class UserHomeScreen extends StatelessWidget {
+  const UserHomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('HOŞBOÝ Mağaza'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              await Supabase.instance.client.auth.signOut();
+              if (context.mounted) {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                );
+              }
+            },
+          ),
+        ],
+      ),
+      body: const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.shopping_bag, size: 80, color: Colors.green),
+            SizedBox(height: 16),
+            Text(
+              'HOŞBOÝ Mağazasına Hoş Geldiniz!',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
