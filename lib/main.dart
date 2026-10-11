@@ -4,11 +4,12 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Supabase.initialize(
-    url: 'https://supabase-proxy-0fcy.onrender.com',
+    url: 'https://hosboy-api.nurmuhammetmerdanov49.workers.dev',
     anonKey: 'sb_publishable_kWGFCXmyYR-VJTRsRLNWA_YP_lh41IH',
   );
   runApp(const MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
