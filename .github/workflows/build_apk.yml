@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
@@ -16,12 +17,36 @@ jobs:
           flutter-version: '3.19.x'
           channel: 'stable'
 
-      - name: Recreate Android Project Files
-        run: flutter create . --platforms=android --project-name hosboy_app
-
-      - name: Set App Name to HOSBOY
+      - name: Set App Name to HOŞBOÝ
         run: |
           sed -i 's/android:label=".*"/android:label="HOŞBOÝ"/' android/app/src/main/AndroidManifest.xml
+
+      - name: Convert and Update App Icon
+        run: |
+          sudo apt-get update && sudo apt-get install -y imagemagick
+          convert app_icon_png.jpg -resize 512x512 app_icon_converted.png
+          mkdir -p android/app/src/main/res/mipmap-hdpi
+          mkdir -p android/app/src/main/res/mipmap-mdpi
+          mkdir -p android/app/src/main/res/mipmap-xhdpi
+          mkdir -p android/app/src/main/res/mipmap-xxhdpi
+          mkdir -p android/app/src/main/res/mipmap-xxxhdpi
+          cp app_icon_converted.png android/app/src/main/res/mipmap-hdpi/ic_launcher.png
+          cp app_icon_converted.png android/app/src/main/res/mipmap-mdpi/ic_launcher.png
+          cp app_icon_converted.png android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
+          cp app_icon_converted.png android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+          cp app_icon_converted.png android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+
+      - name: Get Dependencies
+        run: flutter pub get
+
+      - name: Build Release APK
+        run: flutter build apk --release
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
 
       - name: Convert and Update App Icon
         run: |
