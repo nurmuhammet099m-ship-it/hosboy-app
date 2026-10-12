@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-// Yerel DNS engelini tamamen aşmak için Google/Cloudflare IP üzerinden zorlamalı HTTP Override
 class BypassDnsHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
@@ -14,13 +13,10 @@ class BypassDnsHttpOverrides extends HttpOverrides {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // DNS ve Sertifika engellerini bypass eden mekanizma aktif ediliyor
   HttpOverrides.global = BypassDnsHttpOverrides();
 
-  // Render Proxy adresi üzerinden bağlantı
   await Supabase.initialize(
-    url: 'https://supabase-proxy-0fcy.onrender.com',
+    url: 'https://hifajxvajxsplwzcornh.supabase.co',
     anonKey: 'sb_publishable_kWGFCXmyYR-VJTRsRLNWA_YP_lh41IH',
   );
 
@@ -54,7 +50,6 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   bool _isLoading = false;
-
   final supabase = Supabase.instance.client;
 
   Future<void> _sendOTP() async {
