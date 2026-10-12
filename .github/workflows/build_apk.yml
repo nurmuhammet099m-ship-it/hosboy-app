@@ -17,9 +17,6 @@ jobs:
           flutter-version: '3.19.x'
           channel: 'stable'
 
-      - name: Generate Android Files
-        run: flutter create . --platforms=android --org com.hosboy
-
       - name: Set App Name to HOŞBOÝ
         run: |
           sed -i 's/android:label=".*"/android:label="HOŞBOÝ"/' android/app/src/main/AndroidManifest.xml
