@@ -16,8 +16,8 @@ void main() async {
   HttpOverrides.global = BypassDnsHttpOverrides();
 
   await Supabase.initialize(
-    url: 'https://hifajxvajxsplwzcornh.supabase.co',
-    anonKey: 'sb_publishable_kWGFCXmyYR-VJTRsRLNWA_YP_lh41IH',
+    url: 'https://hosboy-api.nurmuhammetmerdanov49.workers.dev',
+    anonKey: 'sb_publishable_kWGFCXmyÝR-VJTRsRLNWA_YP_lh41IH',
   );
 
   runApp(const MyApp());
